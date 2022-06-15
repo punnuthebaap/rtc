@@ -1,0 +1,250 @@
+php 
+
+
+LIBRARIESFOLDER
+Phpmailer_lib.php:
+
+//
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+/**
+ * CodeIgniter PHPMailer Class
+ *
+ * This class enables SMTP email with PHPMailer
+ *
+ * @category    Libraries
+ * @author      CodexWorld
+ * @link        https://www.codexworld.com
+ */ 
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+class PHPMailer_Lib
+
+{
+    public function __construct(){
+        log_message('Debug', 'PHPMailer class is loaded.');
+    }
+
+    public function load(){
+        // Include PHPMailer library files
+        require_once APPPATH.'third_party/PHPMailer/src/Exception.php';
+        require_once APPPATH.'third_party/PHPMailer/src/PHPMailer.php';
+        require_once APPPATH.'third_party/PHPMailer/src/SMTP.php';
+        
+        $mail = new PHPMailer;
+        return $mail;
+    }
+}
+
+
+
+
+
+
+
+
+
+/NSIDE CORE LIBRARIES
+
+
+Email.php
+
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Email extends CI_Controller{
+    
+    function  __construct(){
+        parent::__construct();
+         $this->load->library('phpmailer_lib');
+         $this->load->helper('url');
+         $this->config->load('email_config');
+        
+                          }
+    
+   
+
+
+
+
+//send password
+
+
+
+       function sendLoginDetails($to,$email,$subject,$username,$password){
+        // Load PHPMailer library
+       
+        
+        // PHPMailer object
+        $mail = $this->phpmailer_lib->load();
+        
+        // SMTP configuration
+
+        $mail->SMTPDebug = 0; 
+        $mail->isSMTP();
+         $mail->Host= $this->config->item('smtp_host');
+        $mail->SMTPAuth = true;
+        $mail->Username = $this->config->item('smtp_info_username');
+        $mail->Password = $this->config->item('smtp_info_password');
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port=$this->config->item('smtp_port');
+        
+        $mail->setFrom('admission@globalschoolofteachers.com', 'Global School of Teachers');
+        // $mail->addReplyTo('info@example.com', 'CodexWorld');
+        
+        // Add a recipient
+        $mail->addAddress($email);
+        
+        // Add cc or bcc 
+        // $mail->addCC('cc@example.com');
+        // $mail->addBCC('bcc@example.com');
+        
+        // Email subject
+        $mail->Subject = $subject;
+        
+        // Set email format to HTML
+        $mail->isHTML(true);
+        $mailContent = "<div style='padding:9px;background-color:#f7f7f7;border-bottom:5px solid #f7f7f7;max-width:610px;margin:0 auto'><div style='max-width:600px;background-color:#fff;padding:20px;-moz-box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);-webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);height:400px;text-align:left'><div style='width:190px;margin:0 auto;margin-bottom:30px'><img style='width:100%' src='https://www.globalschoolofteachers.com/wp-content/uploads/2021/06/GST_Color_logo-300x119.png'></div><div><p style='font-size:14px;color:#000;line-height:1.4'>Dear,<br>".ucfirst(strtolower($to))."<br><br>You have Sucessfully Registered with the our online Portal. Below are the login details. <br><br>
+             <span>Username: <b>".$username."</b></span><br><span>Password: <b>".$password."</b></span></p> 
+       </div></div></div>";
+        $mail->Body = $mailContent;
+        
+        // Send email
+        if(!$mail->send()){
+            return false;
+        }else{
+           return true;
+        }
+    }
+
+    function SendEmailOtp($PostData,$subject,$templates){
+        // Load PHPMailer library
+       
+        
+        // PHPMailer object
+        $mail = $this->phpmailer_lib->load();
+        
+        // SMTP configuration
+
+        $mail->SMTPDebug = 0; 
+        $mail->isSMTP();
+         $mail->Host= $this->config->item('smtp_host');
+        $mail->SMTPAuth = true;
+        $mail->Username = $this->config->item('smtp_info_username');
+        $mail->Password = $this->config->item('smtp_info_password');
+        $mail->SMTPSecure = 'tls';
+        $mail->Port=$this->config->item('smtp_port');
+        
+        $mail->setFrom('jami.manzoor4@gmail.com', 'Testing');
+        // $mail->addReplyTo('info@example.com', 'CodexWorld');
+        
+        // Add a recipient
+        $mail->addAddress($PostData['email']);
+        
+        // Add cc or bcc 
+        // $mail->addCC('cc@example.com');
+        // $mail->addBCC('bcc@example.com');
+        
+        // Email subject
+        $mail->Subject =$subject;
+        
+        // Set email format to HTML
+        $mail->isHTML(true);
+        $mail->Body = $templates;
+        
+        // Send email
+        if(!$mail->send()){
+            return false;
+        }else{
+           return true;
+        }
+    }
+
+
+
+
+
+    function testEmail(){
+        // Load PHPMailer library
+       
+        
+        // PHPMailer object
+        $mail = $this->phpmailer_lib->load();
+        
+        // SMTP configuration
+
+        $mail->SMTPDebug = 2; 
+        $mail->isSMTP();
+         $mail->Host= $this->config->item('smtp_host');
+        $mail->SMTPAuth = true;
+        $mail->Username = $this->config->item('smtp_info_username');
+        $mail->Password = $this->config->item('smtp_info_password');
+        $mail->SMTPSecure = 'tls';
+        $mail->Port=$this->config->item('smtp_port');
+        
+        $mail->setFrom('jami.manzoor4@gmail.com', 'Testing');
+        // $mail->addReplyTo('info@example.com', 'CodexWorld');
+        
+        // Add a recipient
+        $mail->addAddress("jami.manzoor4@gmail.com");
+        
+        // Add cc or bcc 
+        // $mail->addCC('cc@example.com');
+        // $mail->addBCC('bcc@example.com');
+        
+        // Email subject
+        $mail->Subject ="test";
+        
+        // Set email format to HTML
+        $mail->isHTML(true);
+        $mailContent = "testing";
+        $mail->Body = $mailContent;
+        
+        // Send email
+        if(!$mail->send()){
+            return false;
+        }else{
+           return true;
+        }
+    } 
+}
+
+email_config.php inside config folder
+
+
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+/*
+|--------------------------------------------------------------------------
+| Base Site URL
+|--------------------------------------------------------------------------
+|
+| URL to your CodeIgniter root. Typically this will be your base URL,
+| WITH a trailing slash:
+|
+|	http://example.com/
+|
+| WARNING: You MUST set this value!
+|
+| If it is not set, then CodeIgniter will try guess the protocol and path
+| your installation, but due to security concerns the hostname will be set
+| to $_SERVER['SERVER_ADDR'] if available, or localhost otherwise.
+| The auto-detection mechanism exists only for convenience during
+| development and MUST NOT be used in production!
+|
+| If you need to allow multiple domains, remember that this file is still
+| a PHP script and you can easily do that on your own.
+|
+*/
+
+$config['smtp_host']="smtp.gmail.com";
+
+$config['smtp_port']=587;
+
+
+$config['smtp_info_username'] = 'jami.manzoor4@gmail.com';
+$config['smtp_info_password']='';
+

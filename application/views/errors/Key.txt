@@ -1,0 +1,2 @@
+Key Id=rzp_test_JFnIEEcI1X1q0w
+Key Secret=iptxblheN6oAyISDh24P6QQI

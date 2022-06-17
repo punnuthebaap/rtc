@@ -12,12 +12,15 @@
                                 <table id="shortListedCandidateTable" class="table table-bordered table-striped table-hover dataTable js-exportable">
                                     <thead>
                                         <tr>
+                                            <th data-sortable="false">Sr.No</th>
                                             <th>Name</th>
                                             <th>School Name</th>
                                             <th>Board</th>
-                                            <th>Exam Roll</th>
-                                            <th>Gender</th>
-                                            <!-- <th>Delete</th> -->
+                                            <th>Father</th>
+                                            <th>Mother</th>
+                                            <th>Status</th>
+                                            <!-- <th>Action</th> -->
+                                            <th>View</th>
                                         </tr>
                                     </thead>
                                     <tbody id="ClassTableBody">

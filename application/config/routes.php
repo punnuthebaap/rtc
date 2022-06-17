@@ -65,7 +65,7 @@ $route['fee-head'] = 'Home/feeHead';
 
 //admission-list
 $route['appliedCandidate'] = 'Home/appliedCandidate';
-$route['appliedCandidateReport'] = 'Home/appliedCandidateReportView';
+$route['CandidateReport'] = 'Home/appliedCandidateReportView';
 $route['shortlistedCandidate'] = 'Home/shortlistedCandidate';
 
 // operations
@@ -171,3 +171,6 @@ $route['viewHoliday'] = 'Holiday/viewHoliday';
 
 $route['admissionFormPay/(:num)'] ="Admission/viewAdmissionFormPay";
 $route['getAdmissionDetails'] ="Admission/getAdmissionDetails";
+$route['admissionFeePay/(:num)'] ="Admission/viewAdmissionFeePay";
+
+$route['mail'] ="Home/sendMailAdmission";

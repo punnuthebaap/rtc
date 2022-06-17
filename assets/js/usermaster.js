@@ -301,9 +301,8 @@ $(window).load(function(){
                  $('#appliedCandidateTable').DataTable({
                     processing: true,
                     data:data.data,
-                    searching: true,
-                    responsive:true,
                     columns:[
+                          { data:null, render: function(data, type, full, meta) {return meta.row+1;}},
                           { data: "st_name" },
                           { data: "exam_school_name" },
                           { data: "exam_board" },
@@ -333,7 +332,7 @@ $(window).load(function(){
                           { data: null, defaultContent: "<i id="+'appliedView'+" class="+'material-icons'+" style="+'cursor:pointer'+">remove_red_eye</i>"}
                         ],
                     paging:false,
-                    info: false,    
+                    info: true,
                      language: {    
                          emptyTable: "No data available "   
                      },
@@ -348,11 +347,11 @@ $(window).load(function(){
                             dataType : "JSON",
                             data : {id: data.id},
                             success: function(data){
-                              $(location).attr("href", 'appliedCandidateReport');
+                              $(location).attr("href", 'CandidateReport');
                             }
                           });
-                          // sessionStorage.setItem('appliedCandidateReport', JSON.stringify(data));
-                          // $(location).attr("href", 'appliedCandidateReport');
+                          // sessionStorage.setItem('CandidateReport', JSON.stringify(data));
+                          // $(location).attr("href", 'CandidateReport');
                   });
                   $('#appliedCandidateTable tbody').on( 'click', '#appliedSwitchApplied', function () {
                     var $row = $(this).closest('tr');
@@ -367,14 +366,24 @@ $(window).load(function(){
                       cancelButtonColor: '#d33',
                       confirmButtonText: 'Yes, Shortlist!'
                     }).then((result) => {
+                      Swal.fire({
+                                icon: 'info',
+                                text: 'We are shortlisting and sending an email',
+                                // title: 'Getting Details',
+                                didOpen: () => { Swal.showLoading() },
+                                swaltoast: false,
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                        });
                       if (result.isConfirmed) {
                         $.ajax({
                             type : "POST",
                             url  : "Home/makeShortlist",
                             dataType : "JSON",
-                            data : {id: dataApi.id},
+                            data : dataApi,
                             success: function(data){
                               // console.log(data)
+                              Swal.close();
                               if(data.error===false || data.error===true){
                                 Swal.fire({
                                   // timer: 5000,
@@ -431,19 +440,45 @@ $(window).load(function(){
                     searching: true,
                     responsive:true,
                     columns:[
+                          { data:null, render: function(data, type, full, meta) {return meta.row+1;}},
                           { data: "st_name" },
                           { data: "exam_school_name" },
                           { data: "exam_board" },
-                          { data: "exam_roll_no" },
-                          { data: "gender" },
-                          // { data: null, defaultContent: "<i id="+'userClickTable'+" class="+'material-icons'+" style="+'cursor:pointer'+">edit</i>"},
-                          // { data: null, defaultContent: "<i id="+'userDelTable'+" class="+'material-icons'+" style="+'cursor:pointer'+">delete_forever</i>"}
+                          { data: "father_name" },
+                          { data: "mother_name" },
+                          {
+                                  data: "isAdmissionPay",
+                                  render: function(data, type, full, meta) {
+                                                  if (data == "NO") {
+                                                      return "<span class='label bg-red'>Payment not made</span>"
+                                                  }else{
+                                                      return "<span class='label bg-green'>Payment Done</span>"
+                                                  }
+                                  }
+                          },
+                          { data: null, defaultContent: "<i id="+'appliedView'+" class="+'material-icons'+" style="+'cursor:pointer'+">remove_red_eye</i>"}
                         ],
                     paging:false,
                     info: true,    
                      language: {    
                          emptyTable: "No data available "   
                      },
+                  });
+                 $('#shortListedCandidateTable tbody').on('click', '#appliedView', function() {
+                          var $row = $(this).closest('tr');
+                          var data = $('#shortListedCandidateTable').DataTable().row($row).data();
+                          console.log(data);
+                           $.ajax({
+                            type : "POST",
+                            url  : "Home/storeSessionAppliedCandidate",
+                            dataType : "JSON",
+                            data : {id: data.id},
+                            success: function(data){
+                              $(location).attr("href", 'CandidateReport');
+                            }
+                          });
+                          // sessionStorage.setItem('CandidateReport', JSON.stringify(data));
+                          // $(location).attr("href", 'CandidateReport');
                   });
                 }
                 else{
@@ -478,9 +513,8 @@ function updateTable(){
                  $('#appliedCandidateTable').DataTable({
                     processing: true,
                     data:data.data,
-                    searching: true,
-                    responsive:true,
                     columns:[
+                          { data:null, render: function(data, type, full, meta) {return meta.row+1;}},
                           { data: "st_name" },
                           { data: "exam_school_name" },
                           { data: "exam_board" },
@@ -510,7 +544,7 @@ function updateTable(){
                           { data: null, defaultContent: "<i id="+'appliedView'+" class="+'material-icons'+" style="+'cursor:pointer'+">remove_red_eye</i>"}
                         ],
                     paging:false,
-                    info: false,    
+                    info: true,
                      language: {    
                          emptyTable: "No data available "   
                      },

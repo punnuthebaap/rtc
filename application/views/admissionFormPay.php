@@ -92,7 +92,10 @@
                                                 <div class="col-sm-1 col-sm-offset-6">
                                                     <button class="btn btn-block bg-pink waves-effect" type="submit" onclick="payAdmForm()">Pay</button>
                                                 </div>
+                                            </div>
+                                        </div>
                                             <?php }else{ ?>
+                                              <div id="FormAdDown" class="col-sm-12">
                                                 <h2 class="fontT" style="margin-bottom:30px">Thank You for the payment.</h2>
                                                 <table class="table table-bordered col-sm-offset-3" style="width:50%;">
                                                   <tr>
@@ -106,9 +109,11 @@
                                                     <td style="font-size:18px;"><label class="label bg-green tagTop"><?php echo $info['payment_id'];?></label></td>
                                                   </tr>
                                                 </table>
+                                              </div>
+                                                <div class="col-sm-2 col-sm-offset-5">
+                                                    <button class="btn btn-block bg-pink waves-effect" type="submit" onclick="downloadReceiptForm()">Download Receipt</button>
+                                                </div>
                                             <?php } ?>
-                                            </div>
-                                        </div>
                                         <!-- <div class="col-md-4">
                                             <table class="table table-bordered">
                                               <tr>
@@ -274,7 +279,22 @@
     <script src="<?php echo base_url() ?>assets/js/admin.js"></script>
     <script src="<?php echo base_url() ?>assets/js/pages/examples/sign-in.js"></script>
     <script src="<?php echo base_url() ?>assets/js/sweetalert2.min.js"></script>
+    <script src="<?php echo base_url() ?>assets/js/jspdf.debug.js"></script>
+    <script src="<?php echo base_url() ?>assets/js/html2canvas.js"></script>
     <script type="text/javascript">
+      function downloadReceiptForm(){
+        html2canvas(document.getElementById("FormAdDown"), {
+            onrendered: function(canvas) {
+
+                var imgData = canvas.toDataURL('image/png');
+                console.log('Report Image URL: '+imgData);
+                var doc = new jsPDF('l', 'mm', [297, 210]); //210mm wide and 297mm high
+                
+                doc.addImage(imgData, 'PNG', 1, 1);
+                doc.save('receipt.pdf');
+            }
+        });
+      }
         function backToIndex(){
             $(location).attr("href", 'http://www.rtccbseranchi.org/');
             // $.(location).attr("href","http://www.rtccbseranchi.org/");

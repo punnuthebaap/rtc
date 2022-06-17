@@ -277,15 +277,15 @@ class Home extends CI_Controller {
 	public function appliedCandidateReportView()
 	{
 		$data['authority']=$this->session->userdata('authority');
-		$data['info']=$this->getCandidateDetails($this->session->userdata('appliedCandidateReportID'));
+		$data['info']=$this->getCandidateDetails($this->session->userdata('CandidateReportID'));
 		$data['title'] = "Details of the candidate";
 		$header=$this->load->view('header',$data);
-		$main=$this->load->view('appliedCandidateReport',$data);
+		$main=$this->load->view('CandidateReport',$data);
 		$foot=$this->load->view('footer');
 	}
 	public function storeSessionAppliedCandidate()
 	{
-		$this->session->set_userdata('appliedCandidateReportID',$this->input->post('id'));
+		$this->session->set_userdata('CandidateReportID',$this->input->post('id'));
 		echo true;
 	}
 	public function getCandidateDetails($id)
@@ -306,6 +306,63 @@ class Home extends CI_Controller {
 			return "error: true";
 		}
 	}
+	public function sendMailAdmission()
+	{	
+		$data['id']="2";
+		$data['AppNo']="RTC1";
+		$data['email']="nihalpunnu2129@gmail.com";
+		// $data['id']="2";$appNo="RTC1";
+		$this->load->library('phpmailer_lib');
+		$mail = $this->phpmailer_lib->load();
+		$mail->ClearAddresses();
+		$mail->ClearAttachments();
+		// $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+		$mail->isSMTP();
+		$mail->SMTPDebug = 2;
+		// local settings :
+		// $mail->Host = 'smtp.gmail.com';
+		// $mail->SMTPAuth = true;
+		// $mail->Username = 'nihalpunnu2129@gmail.com';
+		// $mail->Password = 'hvkbclxvuwwanhsl';
+		// $mail->SMTPSecure = 'tls';
+		// $mail->Port = 587;
+		// $mail->setFrom('abc@gmail.com','Mail');
+		// $mail->addReplyTo('no-reply@gmail.com','Mail');
+		// $mail->addAddress($data['email']);
+
+		//live
+		// echo "Into Mail";
+		$mail->Host = 'mail.rtccbseranchi.org';
+		$mail->SMTPAuth = true;
+		$mail->Username = 'info@rtccbseranchi.org';
+		$mail->Password = 'admin@RTC1132';
+		$mail->SMTPSecure = 'tls';
+		$mail->Port = 587;
+		$mail->setFrom('info@rtccbseranchi.org','Mail');
+		$mail->addReplyTo('no-reply@gmail.com','Mail');
+		$mail->addAddress('nihalpunnu2129@gmail.com');
+		//Add cc or bcc
+		//$mail->addCC();
+		//$mail->addBCC();
+
+		//Email Subject
+		$mail->Subject = "You have been shortlisted for admission";
+		$mail->isHTML(true);
+		$message = $this->load->view('email_template',$data,true);
+		$mail->Body = $message;
+
+		// echo "skn";
+		if(!$mail->send()){
+			$result = 'Mailer Error:  ' . $mail->ErrorInfo;
+			// $response = ['error'=>true, 'data'=>$result];
+		}
+		else
+		{
+			$result = 'Mail Send Successfully';
+			// $response = ['error'=>false, 'data'=>$result];
+		}
+		echo $result;
+	}
 	public function shortlistedCandidate()
 	{
 		$data['authority']=$this->session->userdata('authority');
@@ -319,11 +376,14 @@ class Home extends CI_Controller {
 		$this->db->select('*');
 		$this->db->from('web_admission');
 		$this->db->where('is_shortlisted',"NO");
+		$this->db->where('isFormPay',"YES");
 		$query = $this->db->get();
 		$result =  $query->result_array();
 	    $row = $query->num_rows();
 	    if($row)
 		{
+			// $arr=$this->insertSl($result);
+			// print_r($result);
 			$response = ['error'=>false, 'data'=>$result];
 			echo json_encode($response);
 		}
@@ -333,6 +393,14 @@ class Home extends CI_Controller {
 			echo json_encode($response);
 		}
 	}
+	// public function insertSl($data)
+	// {
+	// 	$arr=$data;
+	// 	for($i=0;$i<count($data);$i++){
+	// 		$arr[$i]['sl_no']=strval($i+1);
+	// 	}
+	// 	return $arr;
+	// }
 	public function getShortListedCandidate()
 	{
 		$this->db->select('*');
@@ -361,8 +429,22 @@ class Home extends CI_Controller {
 		$this->db->update('web_admission',$data);
 		if($this->db->affected_rows() > 0)
 		{    
-			$response = ['error'=>false, 'data'=>"Shortlisted Successfully"];
-			echo json_encode($response);   
+			$dataS['id']=$this->input->post('id');
+			$dataS['AppNo']=$this->input->post('application_no');
+			$dataS['email']=$this->input->post('email');
+			$result=$this->sendMailAdmission($dataS);
+			if(!$result['error'])
+			{
+				$response = ['error'=>false, 'data'=>"Mail Sent Successfully"];
+				echo json_encode($response);
+			}
+			else
+			{
+				$response = ['error'=>true, 'data'=>"Mail Sent Failed"];
+				echo json_encode($response);
+			}
+			// $response = ['error'=>false, 'data'=>"Shortlisted Successfully"];
+			// echo json_encode($response);   
 		}
 		else 
 		{

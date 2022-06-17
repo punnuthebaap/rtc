@@ -12,6 +12,7 @@
                                 <table id="appliedCandidateTable" class="table table-bordered table-striped table-hover dataTable js-exportable">
                                     <thead>
                                         <tr>
+                                            <th data-sortable="false">Sr.No</th>
                                             <th>Name</th>
                                             <th>School Name</th>
                                             <th>Board</th>

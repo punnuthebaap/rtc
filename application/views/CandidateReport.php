@@ -15,7 +15,7 @@
                                 <?php }else{ ?>
                                     <span class='label bg-green' >Shortlisted</span>
                                 <?php } ?>
-                                <?php if($info['isFormPay']=="NO"){?>
+                                <?php if($info['isAdmissionPay']=="NO"){?>
                                     <span class='label bg-red text-right' >Payment not made</span>
                                 <?php }else{ ?>
                                     <span class='label bg-green' >Payment done</span>
